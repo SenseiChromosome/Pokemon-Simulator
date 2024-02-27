@@ -1,5 +1,9 @@
 from sys import exit
 from time import sleep as wait
+import pokebase as pb
+
+# charmander = pb.pokemon("charmander")
+# print(charmander.weight)
 
 def select_method():
     select = int(input("""Choose what you want to do:
@@ -54,7 +58,7 @@ def pokemon_menu():
   [3] Trainer
   [4] Pokedex
   [5] Save
-  [6] Settings
+  [6] Settings\n
   """)
 
   if menu_select == "0":
@@ -72,22 +76,21 @@ def pokemon_menu():
   elif menu_select == "6":
     settings()
     
-def party():
-  file = open('accounts.csv', 'r')
-  found = False
-  for line in file:
-      item = line.split(',')
-      if "pokemon" in item:
-        with open('accounts.csv', 'r') as file:
-          for line in file:
-              items = line.strip().split(',')
-              if len(items) >= 4:
-                  print(items[3])
-          found = True
-          break
-  if not found:
-    print(menu_select)
-      #print("\nSorry, Please chosoe a valid operation.")
+def catch_pokemon():
+   pokemon_search = input(f"\nSelect what pokemon you'd like to catch: ")
+   api = pb.pokemon(f"{pokemon_search}")
+   print(f"HP: {api.stats[0].base_stat}\n")
+   print(f"Attack: {api.stats[1].base_stat}\n")
+   print(f"Defense: {api.stats[2].base_stat}\n")
+   print(f"Sp. Atk: {api.stats[3].base_stat}\n")
+   print(f"Sp. Def: {api.stats[4].base_stat}\n")
+   print(f"Speed: {api.stats[5].base_stat}\n")
+   pokemon_menu()
+
+
+#def party():
+  #file = open('accounts.csv', 'r')
+   
 
 
 select_method()
