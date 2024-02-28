@@ -1,11 +1,13 @@
 from sys import exit
 from time import sleep as wait
 import pokebase as pb
+import pandas as pd
+import requests
 
 # charmander = pb.pokemon("charmander")
 # print(charmander.weight)
 
-def select_method():
+def select_method():    #Choose what option of login you'll proceed with
     select = int(input("""Choose what you want to do:
 [1] LOGIN
 [2] SIGN UP
@@ -17,25 +19,27 @@ def select_method():
     else:
         print('\nChoose a valid operation')
 
-def login():
+def login():        #Login System
   username = str(input('Username: '))
   password = str(input('Password: '))
-  file = open('accounts.csv', 'r')
+  file = open('UserData.csv', 'r')
   found = False
   for line in file:
       item = line.split(',')
       if username == item[0] and password == item[1]:
           print('\nLogged in successfully!')
-          pokemon_menu()
+          pokemon_menu(username)
           found = True
           break
   if not found:
       print("\nSorry, you aren't signed up yet.")
+      select_method()
+  return username
 
-def sign_up():
+def sign_up():      #Signup System
     username = str(input('\nUsername: '))
     password = str(input('Password: '))
-    file = open('accounts.csv', 'a')
+    file = open('UserData.csv', 'a')
     info = '\n' + username + ',' + password
     file.write(info)
     print('\nDo you want to log in? [Yes/No]\n')
@@ -48,7 +52,7 @@ def sign_up():
         wait(2)
         exit(0)
 
-def pokemon_menu():
+def pokemon_menu(username):
   menu_select = input("""\nWhat will you do?
 
   [0] Catch Pokemon
@@ -58,39 +62,77 @@ def pokemon_menu():
   [3] Trainer
   [4] Pokedex
   [5] Save
-  [6] Settings\n
+  [6] Settings
+
+  [10] Search by type\n
   """)
 
   if menu_select == "0":
-    catch_pokemon()
+    catch_pokemon(username)
+    username = login()
   elif menu_select == "1":
-    party()
+    party(username)
+    username = login()
   elif menu_select == "2":
     bag()
   elif menu_select == "3":
-    trainer_ID()
+    trainer_ID()                  #menu options 
   elif menu_select == "4":
     pokedex()
   elif menu_select == "5":
     save()
   elif menu_select == "6":
     settings()
+  elif menu_select == "10":
+     type_search()
     
-def catch_pokemon():
-   pokemon_search = input(f"\nSelect what pokemon you'd like to catch: ")
-   api = pb.pokemon(f"{pokemon_search}")
-   print(f"HP: {api.stats[0].base_stat}\n")
-   print(f"Attack: {api.stats[1].base_stat}\n")
-   print(f"Defense: {api.stats[2].base_stat}\n")
-   print(f"Sp. Atk: {api.stats[3].base_stat}\n")
-   print(f"Sp. Def: {api.stats[4].base_stat}\n")
-   print(f"Speed: {api.stats[5].base_stat}\n")
-   pokemon_menu()
+def catch_pokemon(username):
+  pokemon_search = input(f"\nSelect what pokemon you'd like to catch: ")
+  api = pb.pokemon(f"{pokemon_search}")
+  print(f"HP: {api.stats[0].base_stat}\n")
+  print(f"Attack: {api.stats[1].base_stat}\n")
+  print(f"Defense: {api.stats[2].base_stat}\n")     #receiving all stats
+  print(f"Sp. Atk: {api.stats[3].base_stat}\n")
+  print(f"Sp. Def: {api.stats[4].base_stat}\n")
+  print(f"Speed: {api.stats[5].base_stat}\n")
+  userdata_file = pd.read_csv('UserData.csv')
+  row = userdata_file.query(f"Username == '{username}'").iloc[0]
 
+  if pd.isnull(row[f"Pokemon1"]):
+    row.loc["Pokemon1"] = pokemon_search
+  elif pd.isnull(row[f"Pokemon2"]):
+    row.loc["Pokemon2"] = pokemon_search
+  elif pd.isnull(row[f"Pokemon3"]):
+    row.loc["Pokemon3"] = pokemon_search
+  elif pd.isnull(row[f"Pokemon4"]):
+    row.loc["Pokemon4"] = pokemon_search
+  elif pd.isnull(row[f"Pokemon5"]):
+    row.loc["Pokemon5"] = pokemon_search
+  elif pd.isnull(row[f"Pokemon6"]):
+    row.loc["Pokemon6"] = pokemon_search
+  else:
+    print("Party Full")
+  userdata_file.loc[row.name] = row  
+  userdata_file.to_csv('UserData.csv', index=False)
 
-#def party():
-  #file = open('accounts.csv', 'r')
-   
+  pokemon_menu(username)
 
+def party(username):
+  df = pd.read_csv('UserData.csv')
+  print(df[df['Username'] == username])
+  pokemon_menu(username)   
+
+def type_search():
+    input_type = input(f"Enter which type of pokemon youd like to see: ")
+    url = (f"https://pokeapi.co/api/v2/type/{input_type}")
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        type_pokemon = []
+        for pokemon in data['pokemon']:
+            type_pokemon.append(pokemon['pokemon']['name'])
+    else:
+      print("Error fetch data...")
+    print(f"\n{type_pokemon}")
 
 select_method()
