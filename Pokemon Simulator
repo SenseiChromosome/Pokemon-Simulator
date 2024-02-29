@@ -58,11 +58,11 @@ def pokemon_menu(username):
   [0] Catch Pokemon
   
   [1] Party
-  [2] Bag
-  [3] Trainer
-  [4] Pokedex
-  [5] Save
-  [6] Settings
+  [2] Bag (In construction)
+  [3] Trainer (In construction)
+  [4] Pokedex (In construction)
+  [5] Save (In construction)
+  [6] Settings (In construction)
 
   [10] Search by type\n
   """)
