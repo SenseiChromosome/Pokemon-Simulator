@@ -74,15 +74,15 @@ def pokemon_menu(username):
     party(username)
     username = login()
   elif menu_select == "2":
-    bag()
+    bag() #In construction
   elif menu_select == "3":
-    trainer_ID()                  #menu options 
+    trainer_ID() #In construction                  #menu options 
   elif menu_select == "4":
-    pokedex()
+    pokedex() #In construction
   elif menu_select == "5":
-    save()
+    save() #In construction
   elif menu_select == "6":
-    settings()
+    settings() #In construction
   elif menu_select == "10":
      type_search()
     
@@ -91,7 +91,7 @@ def catch_pokemon(username):
   api = pb.pokemon(f"{pokemon_search}")
   print(f"HP: {api.stats[0].base_stat}\n")
   print(f"Attack: {api.stats[1].base_stat}\n")
-  print(f"Defense: {api.stats[2].base_stat}\n")     #receiving all stats
+  print(f"Defense: {api.stats[2].base_stat}\n")     #receiving all stats(Each line will display that specific stat of the pokemon.)
   print(f"Sp. Atk: {api.stats[3].base_stat}\n")
   print(f"Sp. Def: {api.stats[4].base_stat}\n")
   print(f"Speed: {api.stats[5].base_stat}\n")
